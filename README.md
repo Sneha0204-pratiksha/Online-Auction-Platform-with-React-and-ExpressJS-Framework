@@ -1,84 +1,19 @@
-# Online-Auction-Platform-with-React-and-ExpressJS-Framework/* Online Auction Platform - React (Frontend) and Express.js (Backend) */
+### **Online Auction Platform - React & Express.js**  
 
-// Backend: Express.js (server.js)
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+This project is a simple **online auction platform** using **React** (frontend) and **Express.js** with **MongoDB** (backend).  
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+#### **Backend (Express.js - server.js)**
+- Uses **Express.js** to create a REST API server.  
+- Connects to **MongoDB** using **Mongoose**.  
+- Defines an `Item` schema with `name`, `description`, `startingBid`, and `currentBid`.  
+- Implements routes:  
+  - `GET /items` → Fetch all auction items.  
+  - `POST /items` → Add a new item to the auction.  
 
-mongoose.connect('mongodb://localhost:27017/auction', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+#### **Frontend (React - App.js)**
+- Uses **React Hooks (`useState`, `useEffect`)** to manage state.  
+- Fetches auction items from the backend using **Axios**.  
+- Provides an input form to add new auction items.  
+- Displays auction items in a list format.  
 
-const ItemSchema = new mongoose.Schema({
-  name: String,
-  description: String,
-  startingBid: Number,
-  currentBid: Number,
-});
-
-const Item = mongoose.model('Item', ItemSchema);
-
-app.get('/items', async (req, res) => {
-  const items = await Item.find();
-  res.json(items);
-});
-
-app.post('/items', async (req, res) => {
-  const newItem = new Item(req.body);
-  await newItem.save();
-  res.json(newItem);
-});
-
-app.listen(5000, () => {
-  console.log('Server running on port 5000');
-});
-
-// Frontend: React (App.js)
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-function App() {
-  const [items, setItems] = useState([]);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startingBid, setStartingBid] = useState('');
-
-  useEffect(() => {
-    axios.get('http://localhost:5000/items').then((response) => {
-      setItems(response.data);
-    });
-  }, []);
-
-  const addItem = () => {
-    axios
-      .post('http://localhost:5000/items', { name, description, startingBid, currentBid: startingBid })
-      .then((response) => {
-        setItems([...items, response.data]);
-      });
-  };
-
-  return (
-    <div>
-      <h1>Online Auction Platform</h1>
-      <div>
-        <input placeholder="Name" onChange={(e) => setName(e.target.value)} />
-        <input placeholder="Description" onChange={(e) => setDescription(e.target.value)} />
-        <input placeholder="Starting Bid" type="number" onChange={(e) => setStartingBid(e.target.value)} />
-        <button onClick={addItem}>Add Item</button>
-      </div>
-      <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name} - ${item.currentBid}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
+This project provides a basic foundation for an **auction system** where users can list items and track bids.
